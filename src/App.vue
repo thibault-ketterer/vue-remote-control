@@ -25,6 +25,12 @@
 
     <button @click="getNewStateRemotely">Get new state remotely</button>
   </div>
+
+<div id="counter">
+sdfdsfds
+  Counter: {{ counter }}
+</div>
+
 </template>
 
 
@@ -107,6 +113,17 @@ const machine = createMachine({
 });
 
 export default {
+   mounted() {
+    setInterval(() => {
+      this.counter++
+      this.getNewStateRemotely()
+    }, 1000)
+  },
+  data() {
+    return {
+      counter: 0
+    }
+  },
   setup() {
     const axios = inject('axios');
 
@@ -115,6 +132,7 @@ export default {
         .get('https://raw.githubusercontent.com/thibault-ketterer/vue-remote-control/main/newstate.json')
         .then(response => {
           console.log(response.data);
+          send(response.data['newstate']);
         });
     };
 
