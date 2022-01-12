@@ -1,8 +1,15 @@
 <template>
   <div id="app">
-avnat YT
-    <youtube :video-id="videoId" :player-vars="playerVars" @playing="playing"></youtube>
-apres YT
+    <div>
+      video_id : <input type="text" v-model="temp.video_id" /><br />
+      loop : <input type="number"  v-model.number="temp.loop" /><br />
+      <button @click="applyConfig">Apply</button>
+      <button @click="playCurrentVideo">Play</button>
+      <button @click="stopCurrentVideo">Stop</button>
+      <button @click="pauseCurrentVideo">Pause</button>
+    </div>
+      <YoutubeVue3 ref="youtube" :videoid="play.video_id" :loop="play.loop" :width="480" :height="320"  
+      @ended="onEnded" @paused="onPaused" @played="onPlayed"/>
     <br />
     <img alt="Vue logo" src="./assets/logo.png" width="25%" />
     <p>Hello Vue in CodeSandbox!</p>
@@ -43,6 +50,8 @@ sdfdsfds
 import { createMachine } from "xstate";
 import { useMachine } from "@xstate/vue";
 import { ref, inject } from "vue";
+
+import { YoutubeVue3 } from 'youtube-vue3'
 
 const machine = createMachine({
   id: "playerMachine",
@@ -118,8 +127,26 @@ const machine = createMachine({
 
 export default {
   methods: {
-    playing() {
-      console.log('\\o/ we are watching!!!')
+    applyConfig() {
+      this.play = Object.assign(this.play, this.temp)
+    },
+    playCurrentVideo() {
+      this.$refs.youtube.player.playVideo();
+    },
+    stopCurrentVideo() {
+      this.$refs.youtube.player.stopVideo();
+    },
+    pauseCurrentVideo() {
+      this.$refs.youtube.player.pauseVideo();
+    },
+    onEnded() {
+      console.log("## OnEnded")
+    },
+    onPaused() {
+      console.log("## OnPaused")
+    },
+    onPlayed() {
+      console.log("## OnPlayed")
     }
   },
 // https://renatello.com/vue-js-polling-using-setinterval/
@@ -132,11 +159,12 @@ export default {
   data() {
     return {
       counter: 0,
-      videoId: 'lG0Ys-2d4MA',
-      playerVars: {
-        autoplay: 1
-      }
+      temp: { video_id:"3P1CnWI62Ik", loop:1 },
+      play : { video_id:"3P1CnWI62Ik", loop:1 }
     }
+  },
+  components: {
+    YoutubeVue3
   },
   beforeUnmount () {
     clearInterval(this.polling)
@@ -158,7 +186,12 @@ export default {
       //define the actions that will be triggered when buttons are click
       actions: {
         playVideo: () => videoElement.value?.play(),
-        pauseVideo: () => videoElement.value?.pause(),
+        pauseVideo: () => { 
+          videoElement.value?.pause();
+          // attempt to pause youtube too
+          this.pauseCurrentVideo(); //nope ?
+          this.$refs.youtube.player.pauseVideo(); //nope ?
+        },
         resetVideo: () => {
           videoElement.value.pause();
           videoElement.value.currentTime = 0;
