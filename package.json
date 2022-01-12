@@ -13,6 +13,7 @@
     "core-js": "^3.6.5",
     "vue": "^3.0.0-0",
     "vue-axios": "^3.4.0",
+    "vue-youtube": "^1.4.0",
     "xstate": "4.25.0"
   },
   "devDependencies": {

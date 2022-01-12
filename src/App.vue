@@ -1,5 +1,9 @@
 <template>
   <div id="app">
+avnat YT
+    <youtube :video-id="videoId" :player-vars="playerVars" @playing="playing"></youtube>
+apres YT
+    <br />
     <img alt="Vue logo" src="./assets/logo.png" width="25%" />
     <p>Hello Vue in CodeSandbox!</p>
     <video
@@ -113,16 +117,29 @@ const machine = createMachine({
 });
 
 export default {
+  methods: {
+    playing() {
+      console.log('\\o/ we are watching!!!')
+    }
+  },
+// https://renatello.com/vue-js-polling-using-setinterval/
    mounted() {
-    setInterval(() => {
+    this.polling = setInterval(() => {
       this.counter++
       this.getNewStateRemotely()
     }, 1000)
   },
   data() {
     return {
-      counter: 0
+      counter: 0,
+      videoId: 'lG0Ys-2d4MA',
+      playerVars: {
+        autoplay: 1
+      }
     }
+  },
+  beforeUnmount () {
+    clearInterval(this.polling)
   },
   setup() {
     const axios = inject('axios');
