@@ -22,6 +22,8 @@
     <button @click="send('RESET')">Reset</button>
 
     <button @click="send('END')">Stop</button>
+
+    <button @click="getNewStateRemotely">Get new state remotely</button>
   </div>
 </template>
 
@@ -30,7 +32,7 @@
 <script>
 import { createMachine } from "xstate";
 import { useMachine } from "@xstate/vue";
-import { ref } from "vue";
+import { ref, inject } from "vue";
 
 const machine = createMachine({
   id: "playerMachine",
@@ -106,6 +108,16 @@ const machine = createMachine({
 
 export default {
   setup() {
+    const axios = inject('axios');
+
+    const getNewStateRemotely = () => {
+      axios
+        .get('https://raw.githubusercontent.com/thibault-ketterer/vue-remote-control/main/newstate.json')
+        .then(response => {
+          console.log(response.data);
+        });
+    };
+
     const videoElement = ref(null);
     const { state, send } = useMachine(machine, {
       //define the actions that will be triggered when buttons are click
@@ -127,6 +139,7 @@ export default {
       state,
       send,
       videoElement,
+      getNewStateRemotely
     };
   },
 };
