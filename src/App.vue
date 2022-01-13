@@ -182,15 +182,17 @@ export default {
     };
 
     const videoElement = ref(null);
+    const youtube = ref(null);
     const { state, send } = useMachine(machine, {
       //define the actions that will be triggered when buttons are click
       actions: {
-        playVideo: () => videoElement.value?.play(),
+        playVideo: () => {
+          videoElement.value?.play();
+          youtube.value?.player.playVideo();
+        },
         pauseVideo: () => { 
           videoElement.value?.pause();
-          // attempt to pause youtube too
-          this.pauseCurrentVideo(); //nope ?
-          this.$refs.youtube.player.pauseVideo(); //nope ?
+          youtube.value?.player.pauseVideo();
         },
         resetVideo: () => {
           videoElement.value.pause();
@@ -207,6 +209,7 @@ export default {
       state,
       send,
       videoElement,
+      youtube,
       getNewStateRemotely
     };
   },
